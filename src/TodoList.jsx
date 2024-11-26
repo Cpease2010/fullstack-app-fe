@@ -1,17 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const TodoList = () => {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState("");
 
+  // Fetch tasks from the Python API
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:5000/tasks");
+        const data = await response.json();
+        setTasks(data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
   const addTask = () => {
     if (task.trim() === "") return;
-    setTasks([...tasks, task]);
+    setTasks([...tasks, { id: tasks.length + 1, task }]);
     setTask("");
   };
 
-  const removeTask = (index) => {
-    const newTasks = tasks.filter((_, i) => i !== index);
+  const removeTask = (id) => {
+    const newTasks = tasks.filter((t) => t.id !== id);
     setTasks(newTasks);
   };
 
@@ -43,9 +58,9 @@ const TodoList = () => {
         Add Task
       </button>
       <ul style={{ listStyle: "none", padding: "0" }}>
-        {tasks.map((t, index) => (
+        {tasks.map((t) => (
           <li
-            key={index}
+            key={t.id}
             style={{
               display: "flex",
               justifyContent: "space-between",
@@ -55,9 +70,9 @@ const TodoList = () => {
               borderRadius: "5px",
             }}
           >
-            {t}
+            {t.task}
             <button
-              onClick={() => removeTask(index)}
+              onClick={() => removeTask(t.id)}
               style={{
                 padding: "5px 10px",
                 backgroundColor: "#f44336",

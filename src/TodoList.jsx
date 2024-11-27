@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react";
 const TodoList = () => {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState("");
+  const fullstack_app_be_url = process.env.REACT_APP_FULLSTACK_APP_BE_URL
 
   // Fetch tasks from the Python API
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/tasks");
+        const response = await fetch(`${fullstack_app_be_url}/tasks`);
         const data = await response.json();
         setTasks(data);
       } catch (error) {

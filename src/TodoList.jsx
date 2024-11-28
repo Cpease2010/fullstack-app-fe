@@ -7,16 +7,6 @@ const TodoList = () => {
 
   // Fetch tasks from the Python API
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await fetch(`${fullstack_app_be_url}/tasks`);
-        const data = await response.json();
-        setTasks(data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
-
     fetchTasks();
   }, []);
 
@@ -26,10 +16,42 @@ const TodoList = () => {
     setTask("");
   };
 
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch(`${fullstack_app_be_url}/tasks`);
+      const data = await response.json();
+      setTasks(data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
   const removeTask = (id) => {
     const newTasks = tasks.filter((t) => t.id !== id);
     setTasks(newTasks);
   };
+
+  const createTask = async () => {
+    const response = await fetch(`${fullstack_app_be_url}/tasks`, {
+      body: JSON.stringify(tasks),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    console.log("Post attempted!", {response})
+  }
+
+  const deleteTask = async () => {
+    const response = await fetch(`${fullstack_app_be_url}/tasks`, {
+      body: JSON.stringify(tasks),
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    console.log("Delete attempted!", {response})
+  }
 
   return (
     <div style={{ maxWidth: "400px", margin: "20px auto", textAlign: "center" }}>
@@ -57,6 +79,32 @@ const TodoList = () => {
         }}
       >
         Add Task
+      </button>
+      <button
+        onClick={createTask}
+        style={{
+          padding: "10px 20px",
+          marginBottom: "20px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        Create Task
+      </button>
+      <button
+        onClick={deleteTask}
+        style={{
+          padding: "10px 20px",
+          marginBottom: "20px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        Delete Task
       </button>
       <ul style={{ listStyle: "none", padding: "0" }}>
         {tasks.map((t) => (
